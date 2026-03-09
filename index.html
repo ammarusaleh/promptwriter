@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptWriter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .category-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .category-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .prompt-display {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .prompt-category-tag {
+            display: inline-block;
+            background: #f0f4ff;
+            color: #3b82f6;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .prompt-text {
+            font-size: 1.5rem;
+            color: #222;
+            line-height: 1.6;
+            font-weight: 400;
+            margin-bottom: 24px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #555;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .btn-favorite {
+            background: transparent;
+            color: #ccc;
+            border: 2px solid #e0e0e0;
+            padding: 10px 14px;
+        }
+
+        .btn-favorite:hover {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .btn-favorite.saved {
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .favorites-section {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+        }
+
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .favorite-item {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 12px;
+        }
+
+        .favorite-text {
+            flex: 1;
+            font-size: 0.95rem;
+            color: #333;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .favorite-category {
+            font-size: 0.75rem;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: #ccc;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+            transition: color 0.2s ease;
+        }
+
+        .btn-delete:hover {
+            color: #ff6b6b;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            .prompt-text {
+                font-size: 1.25rem;
+            }
+
+            .category-buttons {
+                gap: 8px;
+            }
+
+            .category-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PromptWriter</h1>
+            <p>Your daily writing companion</p>
+        </div>
+
+        <div class="card">
+            <div class="category-buttons" id="categoryButtons">
+                <button class="category-btn active" data-category="all">All</button>
+                <button class="category-btn" data-category="fiction">Fiction</button>
+                <button class="category-btn" data-category="creativity">Creativity</button>
+                <button class="category-btn" data-category="journaling">Journaling</button>
+            </div>
+
+            <div class="prompt-display">
+                <div class="prompt-category-tag" id="categoryTag"></div>
+                <div class="prompt-text" id="promptText">Click "Get Prompt" to start writing</div>
+                <div class="button-group">
+                    <button class="btn btn-primary" id="newPromptBtn">Get Prompt</button>
+                    <button class="btn btn-secondary btn-favorite" id="favoriteBtn">♡ Save</button>
+                </div>
+            </div>
+
+            <div class="favorites-section">
+                <h2 class="section-title">Saved Prompts</h2>
+                <div id="favoritesList" class="favorites-list">
+                    <div class="empty-state">No saved prompts yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
